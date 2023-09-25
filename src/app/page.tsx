@@ -4,39 +4,76 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { FaCirclePlus } from "react-icons/fa6"
 
 export default function Home() {
-  const [formData, setFormData] = useState([
-    { id: 1, name: "", measurement: 0, unit: "" },
-  ])
+  const [formData, setFormData] = useState({
+    ingredients: [{ id: 1, name: "", measurement: 0, unit: "oz" }],
+    garnishes: [{ id: 1, name: "" }],
+  })
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
 
-  const handleChange = (
+  const handleIngredientChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     id: number,
     key: string
   ) => {
-    setFormData((prevState) =>
-      prevState.map((ingredient) =>
+    setFormData({
+      ...formData,
+      ingredients: formData.ingredients.map((ingredient) =>
         ingredient.id === id
           ? {
               ...ingredient,
               [key]: e.target.value,
             }
           : ingredient
-      )
-    )
+      ),
+    })
   }
 
-  const addIngredient = () => {
-    const highestId = Math.max(
-      ...formData.map((ingredient) => ingredient.id, 0)
-    )
-    const nextId = highestId + 1
-    const newIngredient = { id: nextId, name: "", measurement: 0, unit: "" }
+  const handleGarnishChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    id: number
+  ) => {
+    setFormData({
+      ...formData,
+      garnishes: formData.garnishes.map((garnish) =>
+        garnish.id === id
+          ? {
+              ...garnish,
+              name: e.target.value,
+            }
+          : garnish
+      ),
+    })
+  }
 
-    setFormData((prevState) => [...prevState, newIngredient])
+  const addItem = (item: string) => {
+    if (item === "ingredient") {
+      const highestId = Math.max(
+        ...formData.ingredients.map((ingredient) => ingredient.id, 0)
+      )
+      const nextId = highestId + 1
+      const newIngredient = { id: nextId, name: "", measurement: 0, unit: "oz" }
+
+      setFormData({
+        ...formData,
+        ingredients: [...formData.ingredients, newIngredient],
+      })
+    }
+
+    if (item === "garnish") {
+      const highestId = Math.max(
+        ...formData.garnishes.map((garnish) => garnish.id, 0)
+      )
+      const nextId = highestId + 1
+      const newGarnish = { id: nextId, name: "" }
+
+      setFormData({
+        ...formData,
+        garnishes: [...formData.garnishes, newGarnish],
+      })
+    }
   }
 
   useEffect(() => {
@@ -50,15 +87,19 @@ export default function Home() {
         onSubmit={(e) => handleSubmit(e)}
         className="p-4 rounded-sm flex flex-col gap-y-3"
       >
-        <div className="flex flex-col gap-y-2">
-          {formData.map((ingredient) => (
-            <div className="flex gap-x-2 justify-between" key={ingredient.id}>
+        <div className="flex flex-col gap-y-2 mb-2">
+          <h2 className="text-center text-xl mb-2">Ingredients</h2>
+          {formData.ingredients.map((ingredient) => (
+            <div
+              className="flex gap-x-2 justify-between mb-2"
+              key={ingredient.id}
+            >
               <div className="w-2/6 flex">
                 <input
                   type="text"
                   value={ingredient.measurement}
                   onChange={(e) =>
-                    handleChange(e, ingredient.id, "measurement")
+                    handleIngredientChange(e, ingredient.id, "measurement")
                   }
                   className="w-2/6 p-1 text-stone-900 border-r rounded-l-sm"
                 />
@@ -66,7 +107,9 @@ export default function Home() {
                   name="unit"
                   id="unit"
                   value={ingredient.unit}
-                  onChange={(e) => handleChange(e, ingredient.id, "unit")}
+                  onChange={(e) =>
+                    handleIngredientChange(e, ingredient.id, "unit")
+                  }
                   className="w-4/6 p-1 text-stone-900 rounded-r-sm"
                 >
                   <option value="oz">oz</option>
@@ -77,16 +120,35 @@ export default function Home() {
                 type="text"
                 placeholder="Enter ingredient"
                 value={ingredient.name}
-                onChange={(e) => handleChange(e, ingredient.id, "name")}
+                onChange={(e) =>
+                  handleIngredientChange(e, ingredient.id, "name")
+                }
                 className="w-4/6 rounded-sm p-1 text-stone-900"
               />
             </div>
           ))}
+          <FaCirclePlus
+            className="mx-auto h-5 w-5 cursor-pointer"
+            onClick={() => addItem("ingredient")}
+          />
         </div>
-        <FaCirclePlus
-          className="mx-auto h-5 w-5 cursor-pointer"
-          onClick={addIngredient}
-        />
+        <div className="flex flex-col gap-y-2 mb-4">
+          <h2 className="text-center text-xl mb-2">Garnishes</h2>
+          {formData.garnishes.map((garnish) => (
+            <input
+              key={garnish.id}
+              type="text"
+              placeholder="Enter garnish"
+              value={garnish.name}
+              onChange={(e) => handleGarnishChange(e, garnish.id)}
+              className="w-full rounded-sm p-1 text-stone-900 mb-2"
+            />
+          ))}
+          <FaCirclePlus
+            className="mx-auto h-5 w-5 cursor-pointer"
+            onClick={() => addItem("garnish")}
+          />
+        </div>
         <button className="p-1 border border-slate-300 rounded-sm">
           Mix it up!
         </button>
