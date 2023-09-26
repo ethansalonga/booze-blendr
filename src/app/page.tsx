@@ -1,4 +1,4 @@
-import MixerForm from "./MixerForm"
+import MixerForm from "./components/MixerForm"
 
 export default function Home() {
   return (
