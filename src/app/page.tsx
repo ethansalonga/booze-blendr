@@ -1,4 +1,11 @@
+import type { Metadata } from "next"
 import MixerForm from "./components/MixerForm"
+
+export const metadata: Metadata = {
+  title: "booze blendr | Put your mixology knowledge to the test!",
+  description:
+    "booze blendr is a simple quiz application where you mix ingredients and garnishes to see if it matches an alcoholic drink from our database.",
+}
 
 export default function Home() {
   return (
