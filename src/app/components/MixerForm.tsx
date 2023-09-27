@@ -9,8 +9,14 @@ export default function MixerForm() {
     garnishes: [{ id: 1, name: "" }],
   })
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const res = await fetch(`http://localhost:3000/api/check-drink`, {
+      method: "POST",
+      body: JSON.stringify(formData),
+    })
+    const data = await res.json()
+    console.log(data)
   }
 
   const handleIngredientChange = (
@@ -107,7 +113,7 @@ export default function MixerForm() {
                 className="w-4/6 p-1 text-stone-900 rounded-r-sm"
               >
                 <option value="oz">oz</option>
-                <option value="barspoon">bsp</option>
+                <option value="bsp">bsp</option>
               </select>
             </div>
             <input
