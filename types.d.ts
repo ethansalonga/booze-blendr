@@ -3,6 +3,8 @@ type Drink = {
   name: string
   ingredients: Ingredient[]
   garnishes: string[]
+  image?: string
+  procedure?: string
 }
 
 type Ingredient = {
@@ -15,4 +17,9 @@ type Ingredient = {
 type Garnish = {
   id?: number
   name: string
+}
+
+type Results = {
+  message: string
+  drink: Drink
 }

@@ -20,12 +20,14 @@ export async function POST(request: NextRequest) {
 
   const drinks: Drink[] = []
   querySnap.forEach((doc) => {
-    const { id, name, ingredients, garnishes } = doc.data()
+    const { id, name, ingredients, garnishes, image, procedure } = doc.data()
     drinks.push({
       id,
       name,
       ingredients,
       garnishes,
+      image,
+      procedure,
     })
   })
 
@@ -43,7 +45,10 @@ export async function POST(request: NextRequest) {
         sortedUserGarnishes
       )
     ) {
-      return NextResponse.json({ message: `Nice! You've created a ${name}.` })
+      return NextResponse.json({
+        message: `Nice! You've whipped up a ${name}.`,
+        drink: drink,
+      })
     }
   }
 

@@ -1,9 +1,12 @@
 "use client"
 
 import { ChangeEvent, FormEvent, useState } from "react"
+import { useResultsContext } from "../context/ResultsContext"
 import { FaCirclePlus } from "react-icons/fa6"
 
 export default function MixerForm() {
+  const { setResults } = useResultsContext()
+
   const [formData, setFormData] = useState({
     ingredients: [{ id: 1, name: "", measurement: 0, unit: "oz" }],
     garnishes: [{ id: 1, name: "" }],
@@ -16,7 +19,7 @@ export default function MixerForm() {
       body: JSON.stringify(formData),
     })
     const data = await res.json()
-    console.log(data)
+    setResults(data)
   }
 
   const handleIngredientChange = (
@@ -85,7 +88,7 @@ export default function MixerForm() {
   return (
     <form
       onSubmit={(e) => handleSubmit(e)}
-      className="p-4 rounded-sm flex flex-col gap-y-3"
+      className="p-4 rounded-sm flex flex-col gap-y-3 mb-8"
     >
       <div className="flex flex-col gap-y-2 mb-2">
         <h2 className="text-center text-xl mb-2">Ingredients</h2>
