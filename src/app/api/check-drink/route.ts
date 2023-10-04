@@ -52,5 +52,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ message: "No drink found." })
+  return NextResponse.json({ message: "No drink found.", drink: {} })
 }

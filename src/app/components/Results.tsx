@@ -10,11 +10,11 @@ export default function Results() {
     drink: { name, ingredients, garnishes, image, procedure },
   } = results
 
-  if (message)
+  if (name) {
     return (
-      <div className="p-4 animate-fadeIn">
+      <div className="p-4">
         <div className="p-4">
-          <h2 className="text-center text-xl mb-4">{message}</h2>
+          <h2 className="text-center text-lg mb-4">{message}</h2>
           <div className="mb-2">
             <p className="font-medium">Ingredients:</p>
             <ul>
@@ -46,4 +46,13 @@ export default function Results() {
         </div>
       </div>
     )
+  } else {
+    return (
+      <div className="p-4">
+        <div className="p-4">
+          <h2 className="text-center text-xl mb-4">{message}</h2>
+        </div>
+      </div>
+    )
+  }
 }
