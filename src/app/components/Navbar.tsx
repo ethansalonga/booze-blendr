@@ -87,7 +87,7 @@ export default function Navbar() {
                           <button
                             className={`${
                               active && "bg-stone-100"
-                            } block px-4 py-2 text-sm text-stone-700`}
+                            } block px-4 py-2 text-sm text-stone-700 w-full text-start`}
                           >
                             Sign out
                           </button>
