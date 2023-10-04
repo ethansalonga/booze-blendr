@@ -3,6 +3,7 @@
 import { ChangeEvent, FormEvent, useState } from "react"
 import { useResultsContext } from "../context/ResultsContext"
 import { FaCirclePlus } from "react-icons/fa6"
+import Spinner from "@/assets/Spinner"
 
 export default function MixerForm() {
   const { setResults } = useResultsContext()
@@ -11,15 +12,18 @@ export default function MixerForm() {
     ingredients: [{ id: 1, name: "", measurement: 0, unit: "oz" }],
     garnishes: [{ id: 1, name: "" }],
   })
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
     const res = await fetch(`http://localhost:3000/api/check-drink`, {
       method: "POST",
       body: JSON.stringify(formData),
     })
     const data = await res.json()
     setResults(data)
+    setLoading(false)
   }
 
   const handleIngredientChange = (
@@ -150,9 +154,16 @@ export default function MixerForm() {
           onClick={() => addItem("garnish")}
         />
       </div>
-      <button className="p-1 border border-stone-300 rounded-sm hover:text-stone-900 hover:bg-stone-300 transition">
-        Mix it up!
-      </button>
+      {!loading ? (
+        <button className="p-1 border border-stone-300 rounded-sm hover:text-stone-900 hover:bg-stone-300 transition">
+          Mix it up!
+        </button>
+      ) : (
+        <div className="flex justify-center items-center gap-2 p-1 border border-stone-300 rounded-sm bg-stone-300">
+          <Spinner className="h-5 w-5 fill-stone-900" />
+          <p className="text-stone-900">Mixing drink...</p>
+        </div>
+      )}
     </form>
   )
 }
