@@ -129,7 +129,7 @@ export default function MixerForm() {
           </div>
         ))}
         <FaCirclePlus
-          className="mx-auto h-5 w-5 cursor-pointer"
+          className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
           onClick={() => addItem("ingredient")}
         />
       </div>
@@ -146,11 +146,11 @@ export default function MixerForm() {
           />
         ))}
         <FaCirclePlus
-          className="mx-auto h-5 w-5 cursor-pointer"
+          className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
           onClick={() => addItem("garnish")}
         />
       </div>
-      <button className="p-1 border border-slate-300 rounded-sm">
+      <button className="p-1 border border-stone-300 rounded-sm hover:text-stone-900 hover:bg-stone-300 transition">
         Mix it up!
       </button>
     </form>
