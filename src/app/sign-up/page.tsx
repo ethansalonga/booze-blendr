@@ -1,7 +1,11 @@
-"use client"
-
+import type { Metadata } from "next"
 import Link from "next/link"
 import SignUpForm from "./components/SignUpForm"
+
+export const metadata: Metadata = {
+  title: "booze blendr | Sign-up",
+  description: "booze blendr sign-up page",
+}
 
 export default function SignUp() {
   return (
