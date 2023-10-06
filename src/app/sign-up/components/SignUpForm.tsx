@@ -7,17 +7,32 @@ export default function SignUpForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [success, setSuccess] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError("")
+    setLoading(true)
 
     if (password !== confirmPassword) {
       return setError("Passwords do not match")
     }
 
-    // await dispatch(signUp({ email, password }))
+    const res = await fetch(`http://localhost:3000/api/sign-up`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    })
+    const data = await res.json()
+
+    if (res.ok) {
+      setSuccess(data.message)
+      setLoading(false)
+    } else {
+      setError(`Failed with error code: ${data.code}`)
+      setLoading(false)
+    }
   }
 
   const handleInputChange = (
@@ -29,6 +44,16 @@ export default function SignUpForm() {
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
+      {success && (
+        <p className="text-center text-green-800 bg-green-100 border border-green-200 rounded-sm py-2 mt-4">
+          {success}
+        </p>
+      )}
+      {error && (
+        <p className="text-center text-red-800 bg-red-100 border border-red-200 rounded-sm py-2 mt-4">
+          {error}
+        </p>
+      )}
       <div>
         <label
           htmlFor="email"
@@ -43,7 +68,7 @@ export default function SignUpForm() {
             type="email"
             autoComplete="email"
             required
-            className="block w-full rounded-md border-0 py-1.5 text-stone-100 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
             onChange={(e) => handleInputChange(e, setEmail)}
           />
         </div>
@@ -65,7 +90,7 @@ export default function SignUpForm() {
             type="password"
             autoComplete="current-password"
             required
-            className="block w-full rounded-md border-0 py-1.5 text-stone-100 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
             onChange={(e) => handleInputChange(e, setPassword)}
           />
         </div>
@@ -87,7 +112,7 @@ export default function SignUpForm() {
             type="password"
             autoComplete="current-password"
             required
-            className="block w-full rounded-md border-0 py-1.5 text-stone-100 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
             onChange={(e) => handleInputChange(e, setConfirmPassword)}
           />
         </div>
