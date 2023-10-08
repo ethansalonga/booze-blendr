@@ -28,11 +28,11 @@ export default function SignUpForm() {
 
     if (res.ok) {
       setSuccess(data.message)
-      setLoading(false)
     } else {
       setError(`Failed with error code: ${data.code}`)
-      setLoading(false)
     }
+
+    setLoading(false)
   }
 
   const handleInputChange = (

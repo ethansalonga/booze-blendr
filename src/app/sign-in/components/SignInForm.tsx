@@ -1,17 +1,35 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState, FormEvent, ChangeEvent } from "react"
 import Spinner from "@/assets/Spinner"
 
 export default function SignInForm() {
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError("")
+    setLoading(true)
 
-    // await dispatch(signIn({ email, password }))
+    const res = await fetch(`http://localhost:3000/api/sign-in`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    })
+    const data = await res.json()
+
+    if (res.ok) {
+      router.push("/blendr")
+    } else {
+      setError(`Failed with error code: ${data.code}`)
+    }
+
+    setLoading(false)
   }
 
   const handleInputChange = (
@@ -26,6 +44,11 @@ export default function SignInForm() {
       className="mt-6 mb-4 sm:mx-auto sm:w-full sm:max-w-sm space-y-6"
       onSubmit={handleSubmit}
     >
+      {error && (
+        <p className="text-center text-red-800 bg-red-100 border border-red-200 rounded-sm py-2 mt-4">
+          {error}
+        </p>
+      )}
       <div>
         <label
           htmlFor="email"

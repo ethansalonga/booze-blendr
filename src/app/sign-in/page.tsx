@@ -17,11 +17,6 @@ export default function SignIn() {
         <h2 className="text-center text-2xl font-medium leading-9 tracking-tight text-stone-100">
           Sign into your account
         </h2>
-        {/* {error && (
-            <p className="text-center text-red-800 bg-red-100 border border-red-200 rounded-sm py-2 mt-4">
-              {error}
-            </p>
-          )} */}
       </div>
       <SignInForm />
       <div>
