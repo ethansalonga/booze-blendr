@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import { useState, FormEvent, ChangeEvent } from "react"
+import { auth } from "@/firebase/init"
+import { signInWithEmailAndPassword } from "firebase/auth"
 import Spinner from "@/assets/Spinner"
 
 export default function SignInForm() {
@@ -17,17 +19,11 @@ export default function SignInForm() {
     setError("")
     setLoading(true)
 
-    const res = await fetch(`http://localhost:3000/api/sign-in`, {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    })
-    const data = await res.json()
-
-    if (res.ok) {
-      router.push("/blendr")
-    } else {
-      setError(`Failed with error code: ${data.code}`)
-    }
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        router.push("/blendr")
+      })
+      .catch((error) => setError(error.message))
 
     setLoading(false)
   }
