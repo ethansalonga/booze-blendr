@@ -1,9 +1,15 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState, FormEvent, ChangeEvent } from "react"
+import { auth, db } from "@/firebase/init"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
 import Spinner from "@/assets/Spinner"
 
 export default function SignUpForm() {
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -20,17 +26,21 @@ export default function SignUpForm() {
       return setError("Passwords do not match")
     }
 
-    const res = await fetch(`http://localhost:3000/api/sign-up`, {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    })
-    const data = await res.json()
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user
 
-    if (res.ok) {
-      setSuccess(data.message)
-    } else {
-      setError(`Failed with error code: ${data.code}`)
-    }
+        const credentialsCopy = { email }
+        await setDoc(doc(db, "users", user.uid), credentialsCopy)
+
+        setSuccess("Your account has been created! Logging you in...")
+        setTimeout(() => {
+          router.push("/blendr")
+        }, 1000)
+      })
+      .catch((error) => {
+        setError(error.message)
+      })
 
     setLoading(false)
   }
