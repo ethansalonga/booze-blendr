@@ -10,6 +10,12 @@ import DefaultProfilePicture from "@/assets/default-profile-picture.jpg"
 export default function Navbar() {
   const navigation = [{ name: "blendr", href: "/", current: "blendr" }]
 
+  const handleSignOut = async () => {
+    await fetch(`http://localhost:3000/api/sign-out`, {
+      method: "POST",
+    })
+  }
+
   return (
     <Disclosure as="nav" className="bg-161616 w-full z-10">
       {({ open }) => (
@@ -88,6 +94,7 @@ export default function Navbar() {
                             className={`${
                               active && "bg-stone-100"
                             } block px-4 py-2 text-sm text-stone-700 w-full text-start`}
+                            onClick={handleSignOut}
                           >
                             Sign out
                           </button>
