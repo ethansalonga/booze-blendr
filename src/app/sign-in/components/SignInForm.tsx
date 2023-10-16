@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation"
 import { useState, FormEvent, ChangeEvent } from "react"
 import { auth } from "@/firebase/init"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import {
+  browserLocalPersistence,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth"
 import Spinner from "@/assets/Spinner"
 
 export default function SignInForm() {
@@ -19,11 +23,17 @@ export default function SignInForm() {
     setError("")
     setLoading(true)
 
-    await signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        router.push("/blendr")
+    await setPersistence(auth, browserLocalPersistence)
+      .then(async () => {
+        return signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            router.push("/blendr")
+          })
+          .catch((error) => setError(error.message))
       })
-      .catch((error) => setError(error.message))
+      .catch((error) => {
+        setError(error.message)
+      })
 
     setLoading(false)
   }

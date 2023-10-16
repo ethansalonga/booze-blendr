@@ -19,15 +19,18 @@ interface PropTypes {
 interface ContextProps {
   user: User | null
   setUser: Dispatch<SetStateAction<User | null>>
+  loading: boolean
 }
 
 const AuthContext = createContext<ContextProps>({
   user: null,
   setUser: () => {},
+  loading: true,
 })
 
 export const AuthContextProvider = ({ children }: PropTypes) => {
   const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -36,13 +39,14 @@ export const AuthContextProvider = ({ children }: PropTypes) => {
       } else {
         setUser(null)
       }
+      setLoading(false)
     })
 
     return () => unsubscribe()
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   )
