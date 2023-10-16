@@ -19,7 +19,7 @@ export default function SignInForm() {
     setError("")
     setLoading(true)
 
-    signInWithEmailAndPassword(auth, email, password)
+    await signInWithEmailAndPassword(auth, email, password)
       .then(() => {
         router.push("/blendr")
       })
