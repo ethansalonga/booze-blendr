@@ -9,7 +9,8 @@ import { useAuthContext } from "../../context/AuthContext"
 //   updateAvatar,
 // } from "../features/auth/authSlice.js"
 import { db } from "@/firebase/init"
-import { doc, getDoc, DocumentData } from "firebase/firestore"
+import { doc, getDoc, DocumentData, updateDoc } from "firebase/firestore"
+import { updateEmail, updatePassword } from "firebase/auth"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import Spinner from "@/assets/Spinner"
 import DefaultProfilePicture from "@/assets/default-profile-picture.jpg"
@@ -32,16 +33,41 @@ const UpdateProfile = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
 
     if (password !== confirmPassword) {
       return setError("Passwords do not match")
     }
 
     if (user) {
-      // dispatch(
-      //   updateProfile({ user: currentUser, email: email, password: password })
-      // )
+      try {
+        await updateEmail(user, email)
+        const docRef = doc(db, "users", user.uid)
+        const docSnapshot = await getDoc(docRef)
+
+        if (docSnapshot.exists()) {
+          const currentData = docSnapshot.data()
+          const updatedData = {
+            ...currentData,
+            email: email,
+          }
+
+          await updateDoc(docRef, updatedData)
+        }
+
+        if (password) {
+          await updatePassword(user, password)
+        }
+
+        setMessage("Credentials successfully updated!")
+        setPassword("")
+        setConfirmPassword("")
+      } catch (error: any) {
+        setError(error.message)
+      }
     }
+
+    setLoading(false)
   }
 
   const handleInputChange = (
@@ -102,7 +128,7 @@ const UpdateProfile = () => {
 
   return (
     <>
-      <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="text-stone-100 flex flex-1 flex-col justify-center py-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="h-20 w-20 rounded-full mx-auto mb-2"
@@ -126,7 +152,7 @@ const UpdateProfile = () => {
               onChange={handleAvatarChange}
             />
           </div>
-          <h2 className="mt-10 text-center text-2xl font-medium leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 text-center text-2xl font-medium leading-9 tracking-tight text-stone-100">
             Update profile
           </h2>
           {message && (
@@ -146,7 +172,7 @@ const UpdateProfile = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-stone-100"
               >
                 Email address
               </label>
@@ -158,7 +184,7 @@ const UpdateProfile = () => {
                   autoComplete="email"
                   required
                   defaultValue={user?.email as string}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
                   onChange={(e) => handleInputChange(e, setEmail)}
                 />
               </div>
@@ -168,7 +194,7 @@ const UpdateProfile = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-stone-100"
                 >
                   Password
                 </label>
@@ -178,9 +204,10 @@ const UpdateProfile = () => {
                   id="password"
                   name="password"
                   type="password"
+                  value={password}
                   autoComplete="current-password"
                   placeholder="Leave blank to leave unchanged"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
                   onChange={(e) => handleInputChange(e, setPassword)}
                 />
               </div>
@@ -190,7 +217,7 @@ const UpdateProfile = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="confirm-password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-stone-100"
                 >
                   Confirm password
                 </label>
@@ -200,9 +227,10 @@ const UpdateProfile = () => {
                   id="confirm-password"
                   name="confirm-password"
                   type="password"
+                  value={password}
                   autoComplete="current-password"
                   placeholder="Leave blank to leave unchanged"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-1.5 text-stone-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
                   onChange={(e) => handleInputChange(e, setConfirmPassword)}
                 />
               </div>
@@ -213,13 +241,13 @@ const UpdateProfile = () => {
                 type="submit"
                 className={`${
                   loading
-                    ? "bg-gray-200 text-gray-900 cursor-auto"
-                    : "bg-824936 text-white hover:bg-8f5b4a"
-                } flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-medium leading-6  shadow-sm`}
+                    ? "bg-stone-400 cursor-auto"
+                    : "bg-stone-100 hover:opacity-90"
+                } text-stone-900 lex w-full justify-center rounded-md px-3 p-1.5 text-sm font-medium leading-6  shadow-sm`}
                 disabled={loading}
               >
                 {loading ? (
-                  <Spinner className="h-6 w-6 fill-824936" />
+                  <Spinner className="mx-auto h-6 w-6 fill-stone-100 animate-spin" />
                 ) : (
                   "Update credentials"
                 )}
