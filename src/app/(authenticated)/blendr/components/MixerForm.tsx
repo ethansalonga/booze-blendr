@@ -1,7 +1,7 @@
 "use client"
 
 import { ChangeEvent, FormEvent, useState } from "react"
-import { useResultsContext } from "../../context/ResultsContext"
+import { useResultsContext } from "@/app/context/ResultsContext"
 import { FaCirclePlus } from "react-icons/fa6"
 import Spinner from "@/assets/Spinner"
 

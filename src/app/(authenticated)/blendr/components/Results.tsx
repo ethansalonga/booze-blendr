@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useResultsContext } from "../../context/ResultsContext"
+import { useResultsContext } from "@/app/context/ResultsContext"
 
 export default function Results() {
   const { results } = useResultsContext()
