@@ -4,16 +4,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { useState, FormEvent, ChangeEvent, useEffect, useRef } from "react"
 import { useAuthContext } from "../../context/AuthContext"
-// import {
-//   updateProfile,
-//   updateAvatar,
-// } from "../features/auth/authSlice.js"
 import { db } from "@/firebase/init"
 import { doc, getDoc, DocumentData, updateDoc } from "firebase/firestore"
 import { updateEmail, updatePassword } from "firebase/auth"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import Spinner from "@/assets/Spinner"
-import DefaultProfilePicture from "@/assets/default-profile-picture.jpg"
 
 const UpdateProfile = () => {
   const { user } = useAuthContext()
@@ -21,15 +16,13 @@ const UpdateProfile = () => {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
-
   const [avatar, setAvatar] = useState(
-    "https://e7.pngegg.com/pngimages/753/432/png-clipart-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service-thumbnail.png"
+    "https://firebasestorage.googleapis.com/v0/b/booze-blendr.appspot.com/o/default-profile-picture.jpg?alt=media&token=bc191c94-443a-40c1-849a-660f039b2099&_gl=1*1woxm81*_ga*ODQ3OTY2MTkuMTY4MTc5NTM4NA..*_ga_CW55HF8NVT*MTY5NzY1NTE4OC43My4xLjE2OTc2NTc0MjAuMjMuMC4w"
   )
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [userProfile, setUserProfile] = useState<DocumentData>({})
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -85,7 +78,6 @@ const UpdateProfile = () => {
 
   const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
-    setSelectedFile(file)
 
     if (file) {
       try {
@@ -97,14 +89,25 @@ const UpdateProfile = () => {
 
         // Update user profile in Firestore
         if (user) {
-          // updateAvatar({ uid: user.uid, url: url })
+          const docRef = doc(db, "users", user.uid)
+          const docSnapshot = await getDoc(docRef)
+
+          if (docSnapshot.exists()) {
+            const currentData = docSnapshot.data()
+            const updatedData = {
+              ...currentData,
+              image: url,
+            }
+
+            await updateDoc(docRef, updatedData)
+          }
         }
 
         // Update avatar ui
         setAvatar(url)
-        setMessage("Avatar successfully updated!")
-      } catch (err) {
-        setError(err as string)
+        setMessage("Profile pic successfully updated!")
+      } catch (err: any) {
+        setError(err.message as string)
       }
     }
   }
@@ -131,18 +134,18 @@ const UpdateProfile = () => {
       <div className="text-stone-100 flex flex-1 flex-col justify-center py-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
-            className="h-20 w-20 rounded-full mx-auto mb-2"
-            src={userProfile.image ? userProfile.image : DefaultProfilePicture}
+            className="h-20 w-20 rounded-full mx-auto mb-4"
+            src={userProfile.image ? userProfile.image : avatar}
             alt=""
-            width={50}
-            height={50}
+            width={80}
+            height={80}
           />
-          <div>
+          <div className="flex justify-center">
             <p
               onClick={handleAvatarClick}
-              className="text-center text-sm cursor-pointer"
+              className="text-center text-sm cursor-pointer text-stone-900 bg-stone-100 py-1.5 px-4 rounded-md hover:opacity-90"
             >
-              Change avatar
+              Change profile pic
             </p>
             <input
               type="file"

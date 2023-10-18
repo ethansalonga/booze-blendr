@@ -2,15 +2,34 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Fragment } from "react"
+import { Fragment, useEffect, useState } from "react"
+import { useAuthContext } from "../context/AuthContext"
+import { db } from "@/firebase/init"
+import { DocumentData, doc, getDoc } from "firebase/firestore"
 import { Disclosure, Menu, Transition } from "@headlessui/react"
 import { auth } from "@/firebase/init"
 import { signOut } from "firebase/auth"
 import { FaBars, FaXmark } from "react-icons/fa6"
-import DefaultProfilePicture from "@/assets/default-profile-picture.jpg"
 
 export default function Navbar() {
   const navigation = [{ name: "blendr", href: "/", current: "blendr" }]
+  const { user } = useAuthContext()
+  const [userProfile, setUserProfile] = useState<DocumentData>({})
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          setUserProfile(docSnap.data())
+        }
+      }
+    }
+
+    getUserProfile()
+  }, [user])
 
   return (
     <Disclosure as="nav" className="bg-161616 w-full z-10">
@@ -57,8 +76,14 @@ export default function Navbar() {
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"
-                        src={DefaultProfilePicture}
+                        src={
+                          userProfile.image
+                            ? userProfile.image
+                            : "https://firebasestorage.googleapis.com/v0/b/booze-blendr.appspot.com/o/default-profile-picture.jpg?alt=media&token=bc191c94-443a-40c1-849a-660f039b2099&_gl=1*1woxm81*_ga*ODQ3OTY2MTkuMTY4MTc5NTM4NA..*_ga_CW55HF8NVT*MTY5NzY1NTE4OC43My4xLjE2OTc2NTc0MjAuMjMuMC4w"
+                        }
                         alt="Profile picture"
+                        width={32}
+                        height={32}
                       />
                     </Menu.Button>
                   </div>
