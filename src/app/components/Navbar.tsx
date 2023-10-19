@@ -10,7 +10,7 @@ import { signOut } from "firebase/auth"
 import { FaBars, FaXmark } from "react-icons/fa6"
 
 export default function Navbar() {
-  const navigation = [{ name: "blendr", href: "/", current: "blendr" }]
+  const navigation = [{ name: "blendr", href: "/blendr", current: "blendr" }]
   const { userProfile } = useAuthContext()
 
   return (
