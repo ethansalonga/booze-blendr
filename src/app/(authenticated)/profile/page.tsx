@@ -2,16 +2,16 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState, FormEvent, ChangeEvent, useEffect, useRef } from "react"
+import { useState, FormEvent, ChangeEvent, useRef } from "react"
 import { useAuthContext } from "../../context/AuthContext"
 import { db } from "@/firebase/init"
-import { doc, getDoc, DocumentData, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { updateEmail, updatePassword } from "firebase/auth"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import Spinner from "@/assets/Spinner"
 
 const UpdateProfile = () => {
-  const { user } = useAuthContext()
+  const { user, userProfile } = useAuthContext()
 
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -22,7 +22,6 @@ const UpdateProfile = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [userProfile, setUserProfile] = useState<DocumentData>({})
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -111,23 +110,6 @@ const UpdateProfile = () => {
       }
     }
   }
-
-  useEffect(() => {
-    const getUserProfile = async () => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid)
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          setUserProfile(docSnap.data())
-        } else {
-          setError("Could not retrieve user information.")
-        }
-      }
-    }
-
-    getUserProfile()
-  }, [user])
 
   return (
     <>

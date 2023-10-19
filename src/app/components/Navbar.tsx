@@ -2,10 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Fragment, useEffect, useState } from "react"
+import { Fragment } from "react"
 import { useAuthContext } from "../context/AuthContext"
-import { db } from "@/firebase/init"
-import { DocumentData, doc, getDoc } from "firebase/firestore"
 import { Disclosure, Menu, Transition } from "@headlessui/react"
 import { auth } from "@/firebase/init"
 import { signOut } from "firebase/auth"
@@ -13,23 +11,7 @@ import { FaBars, FaXmark } from "react-icons/fa6"
 
 export default function Navbar() {
   const navigation = [{ name: "blendr", href: "/", current: "blendr" }]
-  const { user } = useAuthContext()
-  const [userProfile, setUserProfile] = useState<DocumentData>({})
-
-  useEffect(() => {
-    const getUserProfile = async () => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid)
-        const docSnap = await getDoc(docRef)
-
-        if (docSnap.exists()) {
-          setUserProfile(docSnap.data())
-        }
-      }
-    }
-
-    getUserProfile()
-  }, [user])
+  const { userProfile } = useAuthContext()
 
   return (
     <Disclosure as="nav" className="bg-161616 w-full z-10">
