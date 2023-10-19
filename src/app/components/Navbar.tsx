@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Fragment } from "react"
+import { usePathname } from "next/navigation"
+import { Fragment, useState, useEffect } from "react"
 import { useAuthContext } from "../context/AuthContext"
 import { Disclosure, Menu, Transition } from "@headlessui/react"
 import { auth } from "@/firebase/init"
@@ -10,8 +11,20 @@ import { signOut } from "firebase/auth"
 import { FaBars, FaXmark } from "react-icons/fa6"
 
 export default function Navbar() {
-  const navigation = [{ name: "blendr", href: "/blendr", current: "blendr" }]
+  const [currentPage, setCurrentPage] = useState("")
   const { userProfile } = useAuthContext()
+  const pathname = usePathname()
+
+  console.log(pathname)
+
+  const navigation = [
+    { name: "blendr", href: "/blendr", current: currentPage === "/blendr" },
+    { name: "library", href: "/library", current: currentPage === "/library" },
+  ]
+
+  useEffect(() => {
+    setCurrentPage(pathname)
+  }, [pathname])
 
   return (
     <Disclosure as="nav" className="bg-161616 w-full z-10">
@@ -43,6 +56,7 @@ export default function Navbar() {
                             : "text-stone-300 hover:bg-stone-700 hover:text-white"
                         } rounded-md px-3 py-2 text-sm font-medium`}
                         aria-current={item.current ? "page" : undefined}
+                        onClick={() => setCurrentPage(item.href)}
                       >
                         {item.name}
                       </Link>
