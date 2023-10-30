@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FormEvent, useState } from "react"
 import { useResultsContext } from "@/app/context/ResultsContext"
-import { FaCirclePlus } from "react-icons/fa6"
+import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6"
 import Spinner from "@/assets/Spinner"
 
 export default function MixerForm() {
@@ -63,16 +63,30 @@ export default function MixerForm() {
 
   const addItem = (item: string) => {
     if (item === "ingredient") {
-      const highestId = Math.max(
-        ...formData.ingredients.map((ingredient) => ingredient.id, 0)
-      )
-      const nextId = highestId + 1
-      const newIngredient = { id: nextId, name: "", measurement: 0, unit: "oz" }
+      if (formData.ingredients.length < 1) {
+        const newIngredient = { id: 1, name: "", measurement: 0, unit: "oz" }
 
-      setFormData({
-        ...formData,
-        ingredients: [...formData.ingredients, newIngredient],
-      })
+        setFormData({
+          ...formData,
+          ingredients: [...formData.ingredients, newIngredient],
+        })
+      } else {
+        const highestId = Math.max(
+          ...formData.ingredients.map((ingredient) => ingredient.id, 0)
+        )
+        const nextId = highestId + 1
+        const newIngredient = {
+          id: nextId,
+          name: "",
+          measurement: 0,
+          unit: "oz",
+        }
+
+        setFormData({
+          ...formData,
+          ingredients: [...formData.ingredients, newIngredient],
+        })
+      }
     }
 
     if (item === "garnish") {
@@ -89,6 +103,15 @@ export default function MixerForm() {
     }
   }
 
+  const removeItem = (id: number) => {
+    setFormData({
+      ...formData,
+      ingredients: [
+        ...formData.ingredients.filter((ingredient) => ingredient.id !== id),
+      ],
+    })
+  }
+
   return (
     <form
       onSubmit={(e) => handleSubmit(e)}
@@ -98,7 +121,7 @@ export default function MixerForm() {
         <h2 className="text-center text-xl mb-2">Ingredients</h2>
         {formData.ingredients.map((ingredient) => (
           <div
-            className="flex gap-x-2 justify-between mb-2"
+            className="flex gap-x-2 justify-between items-center mb-2"
             key={ingredient.id}
           >
             <div className="w-2/6 flex">
@@ -129,6 +152,10 @@ export default function MixerForm() {
               value={ingredient.name}
               onChange={(e) => handleIngredientChange(e, ingredient.id, "name")}
               className="w-4/6 rounded-sm p-1 text-stone-900"
+            />
+            <FaCircleMinus
+              className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
+              onClick={() => removeItem(ingredient.id)}
             />
           </div>
         ))}
