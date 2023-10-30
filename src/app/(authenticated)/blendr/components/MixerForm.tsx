@@ -90,26 +90,46 @@ export default function MixerForm() {
     }
 
     if (item === "garnish") {
-      const highestId = Math.max(
-        ...formData.garnishes.map((garnish) => garnish.id, 0)
-      )
-      const nextId = highestId + 1
-      const newGarnish = { id: nextId, name: "" }
+      if (formData.garnishes.length < 1) {
+        const newGarnish = { id: 1, name: "" }
 
-      setFormData({
-        ...formData,
-        garnishes: [...formData.garnishes, newGarnish],
-      })
+        setFormData({
+          ...formData,
+          garnishes: [...formData.garnishes, newGarnish],
+        })
+      } else {
+        const highestId = Math.max(
+          ...formData.garnishes.map((garnish) => garnish.id, 0)
+        )
+        const nextId = highestId + 1
+        const newGarnish = { id: nextId, name: "" }
+
+        setFormData({
+          ...formData,
+          garnishes: [...formData.garnishes, newGarnish],
+        })
+      }
     }
   }
 
-  const removeItem = (id: number) => {
-    setFormData({
-      ...formData,
-      ingredients: [
-        ...formData.ingredients.filter((ingredient) => ingredient.id !== id),
-      ],
-    })
+  const removeItem = (id: number, item: string) => {
+    if (item === "ingredient") {
+      setFormData({
+        ...formData,
+        ingredients: [
+          ...formData.ingredients.filter((ingredient) => ingredient.id !== id),
+        ],
+      })
+    }
+
+    if (item === "garnish") {
+      setFormData({
+        ...formData,
+        garnishes: [
+          ...formData.garnishes.filter((garnish) => garnish.id !== id),
+        ],
+      })
+    }
   }
 
   return (
@@ -155,7 +175,7 @@ export default function MixerForm() {
             />
             <FaCircleMinus
               className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
-              onClick={() => removeItem(ingredient.id)}
+              onClick={() => removeItem(ingredient.id, "ingredient")}
             />
           </div>
         ))}
@@ -167,14 +187,23 @@ export default function MixerForm() {
       <div className="flex flex-col gap-y-2 mb-4">
         <h2 className="text-center text-xl mb-2">Garnishes</h2>
         {formData.garnishes.map((garnish) => (
-          <input
+          <div
+            className="flex gap-x-2 justify-between items-center mb-2"
             key={garnish.id}
-            type="text"
-            placeholder="Enter garnish"
-            value={garnish.name}
-            onChange={(e) => handleGarnishChange(e, garnish.id)}
-            className="w-full rounded-sm p-1 text-stone-900 mb-2"
-          />
+          >
+            <input
+              key={garnish.id}
+              type="text"
+              placeholder="Enter garnish"
+              value={garnish.name}
+              onChange={(e) => handleGarnishChange(e, garnish.id)}
+              className="w-full rounded-sm p-1 text-stone-900"
+            />
+            <FaCircleMinus
+              className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
+              onClick={() => removeItem(garnish.id, "garnish")}
+            />
+          </div>
         ))}
         <FaCirclePlus
           className="mx-auto h-5 w-5 cursor-pointer hover:opacity-80"
