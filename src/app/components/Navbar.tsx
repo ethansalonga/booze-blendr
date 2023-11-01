@@ -15,8 +15,6 @@ export default function Navbar() {
   const { userProfile } = useAuthContext()
   const pathname = usePathname()
 
-  console.log(pathname)
-
   const navigation = [
     { name: "blendr", href: "/blendr", current: currentPage === "/blendr" },
     { name: "library", href: "/library", current: currentPage === "/library" },

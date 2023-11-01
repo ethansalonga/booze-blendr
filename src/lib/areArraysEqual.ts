@@ -1,6 +1,4 @@
 export const areArraysEqual = (arr1: any[], arr2: any[]): boolean => {
-  console.log(arr1, arr2)
-
   if (arr1.length !== arr2.length) {
     return false
   }
