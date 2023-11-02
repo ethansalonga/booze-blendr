@@ -1,5 +1,5 @@
-import { areObjectsEqual } from "@/lib/areObjectsEqual"
-import { areArraysEqual } from "@/lib/areArraysEqual"
+import { areObjectsEqual } from "@/app/lib/areObjectsEqual"
+import { areArraysEqual } from "@/app/lib/areArraysEqual"
 
 export const findDrink = (
   ingredients: Ingredient[],
