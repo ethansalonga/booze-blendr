@@ -27,9 +27,9 @@ export default function Library() {
   }, [])
 
   return (
-    <main className="w-full max-w-sm my-8 mx-auto text-stone-100">
+    <main className="w-full max-w-7xl my-8 mx-auto text-stone-100">
       <h1 className="text-center text-3xl font-medium mb-6">Library</h1>
-      <div className="flex">
+      <div className="flex flex-wrap gap-6 mx-4 justify-center">
         {drinks.map((drink) => (
           <DrinkCard drink={drink} key={drink.id} />
         ))}
